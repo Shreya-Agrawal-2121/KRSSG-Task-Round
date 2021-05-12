@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
         ++step;
 
         cout << "Time step " << step << ": \n";
-         /*The status of traffic lights are printed using the print_result function*/
+        /*The status of traffic lights are printed using the print_result function*/
         print_result(p, initial_queue);
         cout << "Initial queue : ";
         for (cnt = 0; cnt < 8; cnt++)

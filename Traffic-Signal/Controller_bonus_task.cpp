@@ -40,13 +40,13 @@ int main(int argc, char *argv[])
             t--;
             for (i = 0; i < 8; i++)
             {
-                //Server receives information of traffic flow 
+                //Server receives information of traffic flow
                 //and modifies the queue of waiting cars accordingly.
                 recv(client_sock, &num, sizeof(int), 0);
                 initial_queue[i] += num;
             }
         }
-         /*traffic_on_spot is a vector of pairs that contains the traffic 
+        /*traffic_on_spot is a vector of pairs that contains the traffic 
         present on the valid possible route(valid traffic lights combination)
         and to ensure that traffic flow is done through 2 possible routes
         at each step a minimum of the summands is also added to ensure
