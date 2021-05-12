@@ -138,4 +138,21 @@ int main(int argc, char *argv[])
             t--;
         }
     }
+    close(sock);
+    return 0;
 }
+/*
+Valid combinations of traffic lights
+1. A - straight,right{0,1}
+2. A - straight, B- straight{0,2}
+3. A - straight D - right{0,7}
+4. A - right B -right{1,3}
+5. A -right C - straight{1,4}
+6. B - straight,right{2,3}
+7. B - straight C - right{2,5}
+8. B - right D - straight{3,6}
+9. C - straight C - right{4,5}
+10. C - straight D - straight{4,6}
+11. C - right D - right{5,7}
+12. D - straight,right{6,7}
+*/
