@@ -43,7 +43,7 @@ def main():
         # A list of distinct numbers is generated and scaled to range of 13
         list_size = 3*n
         list_num = random.sample(range(1, 53), list_size)
-        print(Original values generated)
+        print("Original values generated")
         print(list_num)
         for k in range(list_size):
             list_num[k] = (list_num[k] - 1) % 13 + 1
