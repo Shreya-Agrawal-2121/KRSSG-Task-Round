@@ -109,7 +109,7 @@ int main()
             break;
         p = states[prev_state];
         new_p = states[prev_state + 1];
-        available = check_availability(states);
+        
         switch (prev_state)
         {
         default:
@@ -126,6 +126,7 @@ int main()
             }
             else
             {
+                available = check_availability(states);
                 if((waiting_queue[new_p.first] == 0 || waiting_queue[new_p.second] == 0) && available != 12)
                 {
                     next_state = available;
@@ -149,6 +150,7 @@ int main()
             }
             else
             {
+                available = check_availability(states);
                 if((waiting_queue[new_p.first] == 0 || waiting_queue[new_p.second] == 0) && available != 12)
                 {
                     next_state = available;
