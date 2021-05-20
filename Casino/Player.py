@@ -21,7 +21,7 @@ for i in range(4):
         break
 
     unpacked_data = unpacker.unpack(data)
-
+    print(unpacked_data)
     max_val = max(unpacked_data[0], unpacked_data[1], unpacked_data[2])
 
     packer = struct.Struct('I')
