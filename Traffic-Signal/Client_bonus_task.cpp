@@ -7,56 +7,72 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void print_result(pair<int, int> p, vector<int> queue)
+vector<int> waiting_queue(8, 0);
+void print_queue()
+{
+    for (int i = 0; i < 8; i++)
+        cout << waiting_queue[i] << " ";
+    cout << "\n";
+}
+void print_result(pair<int, int> p)
 {
     vector<char> lights{'A', 'B', 'C', 'D'};
     vector<string> msg = {"off", "go straight", "go right"};
-    int i;
+    int i, status_first, status_second;
 
-    /*In the for loop various conditions are checked 
-    to find the status of lights and to ensure proper formatting 
-    of printed result for each time step.*/
     for (i = 0; i < 4; i++)
     {
-        if (i == p.first / 2 || i == p.second / 2)
+        cout << lights[i] << " ";
+        if (i != p.first / 2 && i != p.second / 2)
         {
-            if (i == p.first / 2 && i != p.second / 2)
-            {
-                if (queue[p.first] <= 0)
-                    cout << lights[i] << ": " << msg[0];
-                else
-                    cout << lights[p.first / 2] << ": " << msg[1 + p.first % 2];
-            }
-            else if (i == p.second / 2 && i != p.first / 2)
-            {
-                if (queue[p.second] <= 0)
-                    cout << lights[i] << ": " << msg[0];
-                else
-                    cout << lights[i] << ": " << msg[1 + p.second % 2];
-            }
-            else if (p.first / 2 == p.second / 2)
-            {
-                if (queue[p.first] > 0)
-                    cout << lights[i] << ": " << msg[1] << " ";
-
-                if (queue[p.first] <= 0 && queue[p.second] > 0)
-                    cout << lights[i] << ": " << msg[2] << " ";
-                else if (queue[p.first] > 0 && queue[p.second] > 0)
-                    cout << msg[2] << " ";
-            }
+            cout << msg[0] << "\n";
         }
         else
-            cout << lights[i] << ": " << msg[0];
+        {
+            if (2 * i == p.first || 2 * i == p.second)
+                cout << msg[1] << " ";
 
-        cout << "\n";
+            if (2 * i + 1 == p.first || 2 * i + 1 == p.second)
+            {
+                cout << msg[2] << " ";
+            }
+            cout << "\n";
+        }
     }
 }
+pair<int, int> set_status(pair<int, int> p)
+{
+    pair<int, int> status = {-2, -2};
+    if (waiting_queue[p.first] > 0)
+        status.first = p.first;
+    if (waiting_queue[p.second] > 0)
+        status.second = p.second;
+    return (status);
+}
+void modify_queue(pair<int, int> p)
+{
+    waiting_queue[p.second] = max(0, waiting_queue[p.second] - 1);
+    waiting_queue[p.first] = max(0, waiting_queue[p.first] - 1);
+}
+void generate_output(pair<int, int> p)
+{
+    pair<int, int> status;
+
+    status = set_status(p);
+    print_result(status);
+    cout << "Initial queue :";
+    print_queue();
+    modify_queue(p);
+    cout << "Final queue :";
+    print_queue();
+}
+
 int main(int argc, char *argv[])
 {
     int sock;
     struct sockaddr_in server;
     pair<int, int> p;
-    vector<int> initial_queue(8, 0);
+
     vector<int> traffic_flow(8, 0);
     int t, i, j, k, step = 0, cnt;
     cout << "Enter number of time steps till which traffic will flow in:\n";
@@ -69,13 +85,14 @@ int main(int argc, char *argv[])
     server.sin_port = htons(8880);
     connect(sock, (struct sockaddr *)&server, sizeof(server));
     send(sock, &t, sizeof(int), 0);
+
     if (t > 0)
     {
         for (i = 0; i < 8; i++)
             cin >> traffic_flow[i];
 
         for (i = 0; i < 8; i++)
-            initial_queue[i] += traffic_flow[i];
+            waiting_queue[i] += traffic_flow[i];
         //At each step the data of traffic flow is sent to server
         for (i = 0; i < 8; i++)
         {
@@ -92,7 +109,7 @@ int main(int argc, char *argv[])
         the initial_queue are zero no other traffic will flow in*/
         for (j = 0; j < 8; j++)
         {
-            if (initial_queue[j] != 0)
+            if (waiting_queue[j] != 0)
                 break;
         }
         if (j == 8 && t <= 0)
@@ -106,20 +123,7 @@ int main(int argc, char *argv[])
         ++step;
 
         cout << "Time step " << step << ": \n";
-        /*The status of traffic lights are printed using the print_result function*/
-        print_result(p, initial_queue);
-        cout << "Initial queue : ";
-        for (cnt = 0; cnt < 8; cnt++)
-            cout << initial_queue[cnt] << " ";
-        cout << "\n";
-        /*After clearing traffic the initial queue is modified accordingly*/
-        initial_queue[p.second] = max(0, initial_queue[p.second] - 1);
-        initial_queue[p.first] = max(0, initial_queue[p.first] - 1);
-
-        cout << "Final queue : ";
-        for (cnt = 0; cnt < 8; cnt++)
-            cout << initial_queue[cnt] << " ";
-        cout << "\n";
+        generate_output(p);
 
         if (t > 0)
         {
@@ -127,7 +131,7 @@ int main(int argc, char *argv[])
                 cin >> traffic_flow[i];
 
             for (i = 0; i < 8; i++)
-                initial_queue[i] += traffic_flow[i];
+                waiting_queue[i] += traffic_flow[i];
 
             for (i = 0; i < 8; i++)
             {
@@ -141,18 +145,3 @@ int main(int argc, char *argv[])
     close(sock);
     return 0;
 }
-/*
-Valid combinations of traffic lights
-1. A - straight,right{0,1}
-2. A - straight, B- straight{0,2}
-3. A - straight D - right{0,7}
-4. A - right B -right{1,3}
-5. A -right C - straight{1,4}
-6. B - straight,right{2,3}
-7. B - straight C - right{2,5}
-8. B - right D - straight{3,6}
-9. C - straight C - right{4,5}
-10. C - straight D - straight{4,6}
-11. C - right D - right{5,7}
-12. D - straight,right{6,7}
-*/

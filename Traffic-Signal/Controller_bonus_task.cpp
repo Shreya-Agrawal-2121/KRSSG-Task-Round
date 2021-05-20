@@ -7,15 +7,39 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+vector<int> waiting_queue(8, 0);
+int traffic_on_spot(pair<int, int> p)
+{
+    return (waiting_queue[p.first] + waiting_queue[p.second]);
+}
+int check_availability(vector<pair<int, int>> states)
+{
+    int i;
+    pair<int, int> available = {-1, -1};
+
+    for (i = 0; i < 12; i++)
+    {
+        if (waiting_queue[states[i].first] > 0 && waiting_queue[states[i].second] > 0)
+        {
+            available = states[i];
+            break;
+        }
+    }
+    return (i);
+}
+void modify_queue(pair<int, int> p)
+{
+    waiting_queue[p.second] = max(0, waiting_queue[p.second] - 1);
+    waiting_queue[p.first] = max(0, waiting_queue[p.first] - 1);
+}
 int main(int argc, char *argv[])
 {
-    vector<pair<int, int>> states = {{0, 1}, {0, 2}, {0, 7}, {1, 3}, {1, 4}, {2, 3}, {2, 5}, {3, 6}, {4, 5}, {4, 6}, {5, 7}, {6, 7}};
-    /*states is a vector of pairs containing all possible combinations of valid traffic lights.
-    The number indicates lights at which position should be turned on while all other are off.*/
-    vector<int> initial_queue(8, 0);
+    vector<pair<int, int>> states = {{0, 2}, {4, 6}, {1, 3}, {5, 7}, {0, 1}, {2, 3}, {4, 5}, {6, 7}, {0, 7}, {1, 4}, {2, 5}, {3, 6}};
     int num;
 
-    int i, j, t, step = 0, k, cnt;
+    int prev_state, next_state, t, i, j, time_step = 0, available;
+    prev_state = 0;
+    pair<int, int> p, new_p, status;
     //  Server socket is created and bound to a port
     //  Connection is established with a client and server is put in listening mode
     int socket_desc, client_sock, c, read_size;
@@ -30,10 +54,11 @@ int main(int argc, char *argv[])
     listen(socket_desc, 3);
     c = sizeof(struct sockaddr_in);
     client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t *)&c);
-    //Client sends to server the information of timesteps till which traffic will flow in
+
     recv(client_sock, &t, sizeof(int), 0);
     while (true)
     {
+        int pos[2];
         if (t > 0)
         {
 
@@ -43,66 +68,78 @@ int main(int argc, char *argv[])
                 //Server receives information of traffic flow
                 //and modifies the queue of waiting cars accordingly.
                 recv(client_sock, &num, sizeof(int), 0);
-                initial_queue[i] += num;
+                waiting_queue[i] += num;
             }
         }
-        /*traffic_on_spot is a vector of pairs that contains the traffic 
-        present on the valid possible route(valid traffic lights combination)
-        and to ensure that traffic flow is done through 2 possible routes
-        at each step a minimum of the summands is also added to ensure
-        no favour to no traffic roads(where traffic at any road is 0, that 
-        road  is given less preference)*/
-        vector<pair<int, int>> traffic_on_spot;
-        traffic_on_spot.assign(12, {0, 0});
-
-        for (i = 0; i < 12; i++)
+        p = states[prev_state];
+        new_p = states[prev_state + 1];
+        switch (prev_state)
         {
-            traffic_on_spot[i].first += initial_queue[states[i].first] + initial_queue[states[i].second];
-            traffic_on_spot[i].second += min(initial_queue[states[i].first], initial_queue[states[i].second]);
+        default:
+            if (traffic_on_spot(p) > 0)
+            {
+                pos[0] = p.first;
+                pos[1] = p.second;
+                send(client_sock, &pos, 2 * sizeof(int), 0);
+                modify_queue(p);
+                //Turn lights on and modify waiting queue
+            }
+            if (traffic_on_spot(p) > 0 && traffic_on_spot(new_p) <= 0)
+            {
+                next_state = prev_state;
+            }
+            else
+            {
+                available = check_availability(states);
+                if ((waiting_queue[new_p.first] == 0 || waiting_queue[new_p.second] == 0) && available != 12)
+                {
+                    next_state = available;
+                }
+                else
+                    next_state = prev_state + 1;
+            }
+            break;
+
+        case 11:
+            if (traffic_on_spot(p) > 0)
+            {
+                pos[0] = p.first;
+                pos[1] = p.second;
+                send(client_sock, &pos, 2 * sizeof(int), 0);
+                modify_queue(p);
+            }
+            if (traffic_on_spot(p) > 0 && traffic_on_spot(new_p) <= 0)
+            {
+                next_state = prev_state;
+            }
+            else
+            {
+                available = check_availability(states);
+                if ((waiting_queue[new_p.first] == 0 || waiting_queue[new_p.second] == 0) && available != 12)
+                {
+                    next_state = available;
+                }
+                else
+                    next_state = 0;
+            }
+            break;
         }
-        /*The roads with maximum traffic is selected and traffic at that roads are cleared first*/
-        vector<pair<int, int>>::iterator it = max_element(traffic_on_spot.begin(), traffic_on_spot.end());
-
-        pair<int, int> p;
-        p.first = states[it - traffic_on_spot.begin()].first;
-        p.second = states[it - traffic_on_spot.begin()].second;
-
-        initial_queue[p.second] = max(0, initial_queue[p.second] - 1);
-        initial_queue[p.first] = max(0, initial_queue[p.first] - 1);
-
-        int pos[2];
-        pos[0] = p.first;
-        pos[1] = p.second;
-        /*The information of traffic lights is sent to client 
-        where it calculates the traffic light as well as displays the
-        status of lights.*/
-        send(client_sock, &pos, 2 * sizeof(int), 0);
+        prev_state = next_state;
 
         for (j = 0; j < 8; j++)
         {
-            if (initial_queue[j] != 0)
+            if (waiting_queue[j] != 0)
                 break;
         }
         if (j == 8 && t <= 0)
-            break;
+        {
+            cout<<"Traffic cleared !! \n";
+                break;
+        }
     }
+
     close(client_sock);
     close(socket_desc);
 
     return 0;
 }
-/*
-Valid combinations of traffic lights
-1. A - straight,right{0,1}
-2. A - straight, B- straight{0,2}
-3. A - straight D - right{0,7}
-4. A - right B -right{1,3}
-5. A -right C - straight{1,4}
-6. B - straight,right{2,3}
-7. B - straight C - right{2,5}
-8. B - right D - straight{3,6}
-9. C - straight C - right{4,5}
-10. C - straight D - straight{4,6}
-11. C - right D - right{5,7}
-12. D - straight,right{6,7}
-*/
