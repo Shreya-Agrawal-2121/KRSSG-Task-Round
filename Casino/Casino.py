@@ -43,12 +43,13 @@ def main():
         # A list of distinct numbers is generated and scaled to range of 13
         list_size = 3*n
         list_num = random.sample(range(1, 53), list_size)
-
+        print(Original values generated)
+        print(list_num)
         for k in range(list_size):
             list_num[k] = (list_num[k] - 1) % 13 + 1
         print("Card values generated (in range of 1 to 13):")
         print(list_num)
-	sleep(5000)
+	
 	
 # A queue is used to store maximum  card value of each player
 # And the queue elements are then stored in a list for further result calculation
