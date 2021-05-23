@@ -14,6 +14,7 @@ void print_queue()
         cout << waiting_queue[i] << " ";
     cout << "\n";
 }
+//Function to print status of traffic lights
 void print_result(pair<int, int> p)
 {
     vector<char> lights{'A', 'B', 'C', 'D'};
@@ -40,6 +41,7 @@ void print_result(pair<int, int> p)
         }
     }
 }
+//Function to decide the status of traffic lights
 pair<int, int> set_status(pair<int, int> p)
 {
     pair<int, int> status = {-2, -2};

@@ -8,10 +8,12 @@
 using namespace std;
 
 vector<int> waiting_queue(8, 0);
+//Function to return number of cars waiting on a particular combination of paths
 int traffic_on_spot(pair<int, int> p)
 {
     return (waiting_queue[p.first] + waiting_queue[p.second]);
 }
+//Function to check if traffic is there at any possible combination  of valid routes
 int check_availability(vector<pair<int, int>> states)
 {
     int i;
@@ -34,6 +36,7 @@ void modify_queue(pair<int, int> p)
 }
 int main(int argc, char *argv[])
 {
+     //States is a vector of pairs  indicating state of lights in  a predefined sequential order
     vector<pair<int, int>> states = {{0, 2}, {4, 6}, {1, 3}, {5, 7}, {0, 1}, {2, 3}, {4, 5}, {6, 7}, {0, 7}, {1, 4}, {2, 5}, {3, 6}};
     int num;
 
@@ -73,6 +76,7 @@ int main(int argc, char *argv[])
         }
         p = states[prev_state];
         new_p = states[prev_state + 1];
+         //Switch statement modifies the list of waiting cars ,prints output and generated the next state
         switch (prev_state)
         {
         default:
@@ -82,7 +86,7 @@ int main(int argc, char *argv[])
                 pos[1] = p.second;
                 send(client_sock, &pos, 2 * sizeof(int), 0);
                 modify_queue(p);
-                //Turn lights on and modify waiting queue
+                
             }
             if (traffic_on_spot(p) > 0 && traffic_on_spot(new_p) <= 0)
             {
@@ -103,6 +107,7 @@ int main(int argc, char *argv[])
         case 11:
             if (traffic_on_spot(p) > 0)
             {
+                //Server sends the valid status of traffic lights to client 
                 pos[0] = p.first;
                 pos[1] = p.second;
                 send(client_sock, &pos, 2 * sizeof(int), 0);
