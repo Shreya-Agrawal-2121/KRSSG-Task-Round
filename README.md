@@ -54,7 +54,14 @@
     Open a terminal and run the below command to start the client
     ```sh
     g++ Client_bonus_task.cpp
+   ```
+* Task 3 - [Task_3](./RRT*_Connect)
+
+    Open a terminal and run the RRT*_Connect Python script.
+    ```sh
+    python RRT*_Connect.py
     ```
+
 * Task 4 - [Task_4_RL](./Pendulum)
 
     The Doc file contains analysis of Pendulum environment and code
