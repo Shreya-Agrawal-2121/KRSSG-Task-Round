@@ -55,3 +55,6 @@
     ```sh
     g++ Client_bonus_task.cpp
     ```
+* Task 4 - [Task_4_RL](./Pendulum)
+
+    The Doc file contains analysis of Pendulum environment and code
