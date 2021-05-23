@@ -10,8 +10,8 @@ class Node:
         self.x = int(n[0])
         self.y = int(n[1])
         self.parent = None
-
-image = cv.imread("/home/shreya/path.jpg",1)
+file_name = input("Enter file name\n")
+image = cv.imread(file_name,1)
 dim = image.shape
 window_name = 'Image'
 image_copy = image.copy()
@@ -72,8 +72,9 @@ def get_new_cost(node_new,node_start):
 #Function to find nearest node to a particular node in a graph
 def nearest_node(n,Graph):
     list_dist = [dist(Graph[i],n) for i in range(len(Graph))]
-    indx = int(np.argmin(list_dist))
-    return(Graph[indx])
+    if len(list_dist) > 0:
+        indx = int(np.argmin(list_dist))
+        return(Graph[indx])
 #Function to find most optimal path to goal node
 def search_goal_parent(Graph,node_goal):
         global step_size
@@ -83,7 +84,8 @@ def search_goal_parent(Graph,node_goal):
         if len(node_index) > 0:
             cost_list = [dist_list[i] + cost(Graph[i]) for i in node_index
                          if is_obstacle_free(node_goal,Graph[i]) == 1]
-            return node_index[int(np.argmin(cost_list))]
+            if len(cost_list) > 0:
+                return node_index[int(np.argmin(cost_list))]
 
         return len(Graph) - 1
 
