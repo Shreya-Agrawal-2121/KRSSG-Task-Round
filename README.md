@@ -55,13 +55,13 @@ _
     ```sh
     g++ Client_bonus_task.cpp
    ```
-* Task 3 - [Task_3](./RRT*_Connect)
+* Task 3 - [Task_3](./Task_3)
 
     Open a terminal and run the RRT*_Connect Python script.
     ```sh
     python RRT*_Connect.py
     ```
 
-* Task 4 - [Task_4_RL](./Pendulum)
+* Task 4 - [Task_4_RL](./Task_4_RL)
 
     The Doc file contains analysis of Pendulum environment and code
