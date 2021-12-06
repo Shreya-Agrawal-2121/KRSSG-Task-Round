@@ -6,7 +6,7 @@
 
 * Task 1 - [Casino](./Casino)
 
-    (A) Primary task
+    (A) Primary task - [CASINO](./Casino/Casino)
 
     Open a terminal and run the Casino game Python Script
     ```sh
@@ -18,7 +18,7 @@
     python Player.py
     ```
 
-    (B) Bonus task
+    (B) Bonus task - [Bonus Task](./Casino/Bonus_Task)
 
     Open a terminal and run the Casino game Python Script
     ```sh
