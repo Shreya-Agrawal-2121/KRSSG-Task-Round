@@ -38,7 +38,7 @@
 * Task 2 - [Traffic Light Controller using FSM](./Traffic_Light_Controller)
 
     (A) Primary Task - [Traffic Light Controller](./Traffic_Light_Controller/FSM)
-_
+
     Open a terminal and run the below command
     ```sh
     g++ Traffic_Light_Controller.cpp
@@ -59,7 +59,7 @@ _
 
     Open a terminal and run the RRT*_Connect Python script.
     ```sh
-    python RRT*_Connect.py
+    python RRT.py
     ```
 
 * Task 4 - [Task_4_RL](./Task_4_RL)
