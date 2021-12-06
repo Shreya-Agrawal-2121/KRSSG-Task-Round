@@ -35,16 +35,16 @@
     python Player_bonus_task.py
     ```
 
-* Task 2 - [Traffic Signal using FSM](./Traffic-Signal)
+* Task 2 - [Traffic Light Controller using FSM](./Traffic-Signal)
 
-    (A) Primary Task
+    (A) Primary Task - [Traffic Light Controller](./Traffic-Signal/FSM)
 
     Open a terminal and run the below command
     ```sh
     g++ traffic_signal.cpp
     ```
 
-    (B) Bonus Task
+    (B) Bonus Task - [Bonus Task](./Traffic-Signal/Bonus_Task)
 
     Open a terminal and run the below command to start the controller server
     ```sh
