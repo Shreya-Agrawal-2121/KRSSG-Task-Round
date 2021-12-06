@@ -57,7 +57,7 @@
    ```
 * Task 3 - [Task_3](./Task_3)
 
-    Open a terminal and run the RRT*_Connect Python script.
+    Open a terminal and run the RRT Python script.
     ```sh
     python RRT.py
     ```
